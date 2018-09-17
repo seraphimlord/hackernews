@@ -55,14 +55,9 @@ const ThemeContext = React.createContext(
 // When using a function, setState will call the function with two properties, prevState and props
 const updateSearchTopStoriesState = function(hits, page) {
 	return function(prevState, props) {
-	  const { searchKey } = prevState;
+	  const { searchKey, result } = prevState;
 
-    const cachedResult = sessionStorage.getItem(searchKey);
-    const parseResult = cachedResult && JSON.parse(cachedResult);
-    let oldHits = [];
-    if (cachedResult) {    	
-      oldHits = parseResult.hits || [];
-    }
+    const oldHits = result ? result.hits : [];
 
 	  const updatedHits = [
 	    ...oldHits,
@@ -108,8 +103,6 @@ class App extends Component {
 	fetchSearchTopStories = (searchTerm, page = 0) => {		
 		const cachedResult = sessionStorage.getItem(searchTerm);		
 		const parsedResult = cachedResult && JSON.parse(cachedResult);
-
-		console.log("test");
 
 		if(parsedResult && parsedResult.page >= page) {
 			this.setState({
@@ -166,7 +159,7 @@ class App extends Component {
 
 		this.setState({
 			result: { ...newResult }
-		})
+		});
 	}
 
 	onSearchChange = (event) => {
