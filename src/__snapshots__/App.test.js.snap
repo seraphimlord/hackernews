@@ -3,6 +3,11 @@
 exports[`App has a valid snapshot 1`] = `
 <div
   className="page"
+  style={
+    Object {
+      "backgroundColor": "#eeeeee",
+    }
+  }
 >
   <div
     className="interactions"
