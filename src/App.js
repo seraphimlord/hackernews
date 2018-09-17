@@ -38,43 +38,43 @@ const SORTS = {
 };
 
 const themes = {
-  light: {
-    foreground: '#000000',
-    background: '#eeeeee',
-  },
-  dark: {
-    foreground: '#ffffff',
-    background: '#222222',
-  },
+	light: {
+		foreground: '#000000',
+		background: '#eeeeee',
+	},
+	dark: {
+		foreground: '#ffffff',
+		background: '#222222',
+	},
 };
 
 const ThemeContext = React.createContext(
-  themes.light // default value
+	themes.light // default value
 );
 
 // When using a function, setState will call the function with two properties, prevState and props
 const updateSearchTopStoriesState = function(hits, page) {
 	return function(prevState, props) {
-	  const { searchKey, result } = prevState;
+		const { searchKey, result } = prevState;
 
-    const oldHits = result ? result.hits : [];
+		const oldHits = result ? result.hits : [];
 
-	  const updatedHits = [
-	    ...oldHits,
-	    ...hits
-	  ];
+		const updatedHits = [
+			...oldHits,
+			...hits
+		];
 
-	  sessionStorage.setItem(searchKey, JSON.stringify({
-  			hits: updatedHits,
-  			page: page
-	  	})
-	  );
+		sessionStorage.setItem(searchKey, JSON.stringify({
+				hits: updatedHits,
+				page: page
+			})
+		);
 
-	 	return {
-	 		result: { hits: updatedHits, page },
-	 		isLoading: false,
-	 		searchKey: searchKey
-	 	} 
+		return {
+			result: { hits: updatedHits, page },
+			isLoading: false,
+			searchKey: searchKey
+		} 
 	};
 }
 
@@ -110,11 +110,23 @@ class App extends Component {
 					hits: parsedResult.hits,
 					page: parsedResult.page
 				}
-			})
+			});
 			return;
+
 		}
 
-		this.setState({ isLoading: true });
+		if(!parsedResult) {
+			this.setState({
+				result: {
+					hits: [],
+					page: 0
+				}
+			});
+		}
+
+		this.setState({ 
+			isLoading: true 
+		});
 
 		axios(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
 			.then(result => {
@@ -155,7 +167,7 @@ class App extends Component {
 		const updatedHits = hits.filter(isNotId);
 		const newResult = { hits: updatedHits, page };
 
-	  sessionStorage.setItem(searchKey, JSON.stringify(newResult));
+		sessionStorage.setItem(searchKey, JSON.stringify(newResult));
 
 		this.setState({
 			result: { ...newResult }
@@ -272,19 +284,19 @@ class Table extends Component {
 
 	render() {
 		const {
-      list,
-      onDismiss
-    } = this.props;
+			list,
+			onDismiss
+		} = this.props;
 
-    const {
-    	sortKey,
-    	isSortReverse
-    } = this.state;
+		const {
+			sortKey,
+			isSortReverse
+		} = this.state;
 
-    const sortedList = SORTS[sortKey](list);
-    const reverseSortedList = isSortReverse
-      ? sortedList.reverse()
-      : sortedList;
+		const sortedList = SORTS[sortKey](list);
+		const reverseSortedList = isSortReverse
+			? sortedList.reverse()
+			: sortedList;
 
 		return (
 			<div className="tables">
@@ -396,11 +408,11 @@ const Sort = ({
 	children
 	}) => {	
 	const sortClass = classNames(
-    'button-inline',
-    { 'button-active': sortKey === activeSortKey }
-  );
+		'button-inline',
+		{ 'button-active': sortKey === activeSortKey }
+	);
 
-  const upOrDownArrowIcon = isSortReverse === true ? "arrow-down" : "arrow-up"
+	const upOrDownArrowIcon = isSortReverse === true ? "arrow-down" : "arrow-up"
 
 	return (
 		<Button
